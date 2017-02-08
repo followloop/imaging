@@ -1,0 +1,29 @@
+{
+    "name": "followloop/imaging",
+    "description": "Laravel package that simplifies the way you work with images associated to models.",
+    "authors": [
+        {
+            "name": "Jesús Espejo",
+            "email": "j.espejo@agentur-loop.com",
+            "homepage": "http://www.agentur-loop.com",
+            "role": "Back-End Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "illuminate/config": "5.*",
+        "illuminate/database": "5.*",
+        "illuminate/console": "5.*",
+        "illuminate/queue": "5.*",
+        "illuminate/http": "5.*",
+        "illuminate/filesystem": "5.*",
+        "followloop/laravel-repositories": "0.1.*",
+        "followloop/validation-service": "0.1.*",
+        "intervention/image": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "LOOP\\Imaging\\": ""
+        }
+    }
+}
