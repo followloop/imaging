@@ -6,7 +6,7 @@ use LOOP\Imaging\Events\ImageWasProcessed;
 use LOOP\Imaging\Listeners\Traits\MovesProcessedImageToCloud;
 
 /**
- * Class MoveImageToCloudImageSync
+ * Class MoveProcessedImagesToCloudImageSync
  * @package LOOP\Imaging\Listeners
  */
 class MoveProcessedImagesToCloudImageSync

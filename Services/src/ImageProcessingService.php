@@ -58,7 +58,6 @@ class ImageProcessingService implements ImageProcessingServiceInterface
             $result = $image->save( $fullPathToImage, 100 );
         } catch( \Exception $e )
         {
-            dd( $e );
             $result = FALSE;
         }
 

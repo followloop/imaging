@@ -4,13 +4,13 @@ namespace LOOP\Imaging\Events;
 
 /**
  * Class Event
- * @package App\Events
+ * @package LOOP\Imaging\Events
  */
 abstract class Event
 {
 
     /**
-     * Magic method to get the private properties from the event class.
+     * Magic method to get the private/protected properties from the event class.
      * @param $property
      * @return null
      */

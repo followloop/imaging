@@ -7,7 +7,7 @@ use LOOP\Imaging\Services\ImageServiceInterface;
 use LOOP\Imaging\Events\ImageWasCreated;
 
 /**
- * Class ProcessImageAndMoveResultsToCloudSync
+ * Class ProcessImageSync
  * @package LOOP\Imaging\Listeners
  */
 class ProcessImageSync

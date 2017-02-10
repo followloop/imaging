@@ -7,7 +7,7 @@ use LOOP\Imaging\Events\ImageWasProcessed;
 use LOOP\Imaging\Listeners\Traits\MovesProcessedImageToCloud;
 
 /**
- * Class MoveImageToCloudImageAsync
+ * Class MoveProcessedImagesToCloudImageAsync
  * @package LOOP\Imaging\Listeners
  */
 class MoveProcessedImagesToCloudImageAsync implements ShouldQueue

@@ -8,7 +8,7 @@ use LOOP\Imaging\Services\ImageServiceInterface;
 use LOOP\Imaging\Events\ImageWasCreated;
 
 /**
- * Class ProcessImageAndMoveResultsToCloudAsync
+ * Class ProcessImageAsync
  * @package LOOP\Imaging\Listeners
  */
 class ProcessImageAsync implements ShouldQueue

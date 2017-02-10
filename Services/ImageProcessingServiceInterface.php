@@ -4,7 +4,7 @@ namespace LOOP\Imaging\Services;
 
 /**
  * Interface ImageProcessingServiceInterface
- * @package Editorial\Services\Images
+ * @package LOOP\Imaging\Services
  */
 interface ImageProcessingServiceInterface
 {

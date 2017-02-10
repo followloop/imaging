@@ -107,6 +107,7 @@ class ImagingServiceProvider extends ServiceProvider
         foreach (glob(__DIR__.'/Helpers/*.php') as $filename) require_once( $filename );
     }
 
+
     /**
      *
      *

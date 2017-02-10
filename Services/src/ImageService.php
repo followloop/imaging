@@ -2,8 +2,6 @@
 
 namespace LOOP\Imaging\Services\src;
 
-use Illuminate\Http\File;
-use Illuminate\Support\Facades\Storage;
 use LOOP\Imaging\Events\ImageWasCreated;
 use LOOP\Imaging\Events\ImageWasProcessed;
 use LOOP\Imaging\Events\ImageWasRemoved;
@@ -12,8 +10,9 @@ use LOOP\Imaging\Services\ImageProcessingServiceInterface;
 use LOOP\Imaging\Services\ImageServiceInterface;
 use LOOP\Imaging\Services\Validation\ImageValidatorInterface;
 
+
 /**
- * Class ImagesService
+ * Class ImageService
  * @package LOOP\Imaging\Services\src
  */
 class ImageService implements ImageServiceInterface
@@ -111,18 +110,7 @@ class ImageService implements ImageServiceInterface
     {
         if ( !$image->processed )
         {
-            /*
-            $localDiskName = config( 'imaging.local_disk_name');
-
-            $localDisk = Storage::disk( $localDiskName );
-            $cloudDisk = NULL;
-
-            $path = rtrim( dirname( $image->path ), '/');
-
-            if ( !$localDisk->exists( $path ) ) $localDisk->makeDirectory( $path );
-            */
-
-            $finalThumbs = [];
+             $finalThumbs = [];
             $destinationPath = dirname( $image->path );
             foreach( $sizes as $sizeKey => $size )
             {
@@ -132,9 +120,6 @@ class ImageService implements ImageServiceInterface
                 {
                     $thumb =  array_first( $thumbs );
                     $finalThumbs[ $sizeKey ] = $thumb;
-
-                    // And move them to the cloud.
-                    //if ( !is_null( $cloudDisk ) ) $cloudDisk->putFile( $thumb, new File( $thumb ), basename( $thumb ) );
                 }
             }
 
@@ -147,8 +132,6 @@ class ImageService implements ImageServiceInterface
             $image->update( $update );
 
             foreach( $update as $key => $value ) $image->{$key} = $value;
-
-            //if ( !is_null( $cloudDisk ) && $localDisk->exists( $path ) ) $localDisk->deleteDirectory( $path );
 
             event( new ImageWasProcessed( $image ) );
 
