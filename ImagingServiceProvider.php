@@ -7,6 +7,7 @@ use Intervention\Image\ImageManager;
 use LOOP\Imaging\Services\ImageServiceInterface;
 use LOOP\Imaging\Services\ImageProcessingServiceInterface;
 use LOOP\Imaging\Services\src\ImageProcessingService;
+use LOOP\Imaging\Services\src\ImageService;
 use LOOP\Imaging\Services\Validation\ImageValidatorInterface;
 use LOOP\Imaging\Services\Validation\src\ImageValidatorLaravel;
 
@@ -28,6 +29,8 @@ class ImagingServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.$this->configPath => config_path('imaging.php'),
         ], 'imaging');
+
+        $this->loadMigrationsFrom( __DIR__.'/migrations' );
     }
 
 
@@ -45,6 +48,8 @@ class ImagingServiceProvider extends ServiceProvider
         $this->bindValidators();
         $this->bindImageProcessor();
         $this->bindImageService();
+
+        $this->loadHelpers();
 
         // And generators.
         //$this->registerRepositoryGenerator();
@@ -78,7 +83,7 @@ class ImagingServiceProvider extends ServiceProvider
         // Bind the image service.
         $this->app->bind( ImageValidatorInterface::class, function ( $app )
         {
-            $this->app->make( ImageValidatorLaravel::class );
+            return $app->make( ImageValidatorLaravel::class );
         });
     }
 
@@ -90,8 +95,16 @@ class ImagingServiceProvider extends ServiceProvider
         // Bind the image service.
         $this->app->bind( ImageServiceInterface::class, function ( $app )
         {
-            $this->app->make( ImageServiceInterface::class );
+            return $app->make( ImageService::class );
         });
+    }
+
+    /**
+     *
+     */
+    private function loadHelpers()
+    {
+        foreach (glob(__DIR__.'/Helpers/*.php') as $filename) require_once( $filename );
     }
 
     /**

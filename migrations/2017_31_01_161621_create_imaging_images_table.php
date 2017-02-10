@@ -25,6 +25,7 @@ class CreateImagingImagesTable extends Migration
             $table->text('filename');
             $table->string('type', 25)->nullable()->default(NULL);
             $table->boolean('processed')->nullable()->default(FALSE);
+            $table->boolean('cloud')->nullable()->default(FALSE);
             $table->text('thumbnails')->nullable()->default(NULL);
             $table->text('metadata')->nullable()->default(NULL);
             $table->timestampsTz();

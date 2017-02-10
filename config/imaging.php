@@ -45,17 +45,7 @@ return [
     */
     'cloud_disk_url' => '',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Final disk name
-    |--------------------------------------------------------------------------
-    | Specify the name of the local disk that you are using, if you do so.
-    |
-    | To see the name, open the config/filesystem.php and check the name that
-    | you have there. You can create new disks or use the default one, which
-    | is 'local' and defaults to the storage folder.
-    |
-    */
-    //'final_disk' => 'local'
+    'remove_after_moving' => TRUE
+
 
 ];

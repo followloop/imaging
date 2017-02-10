@@ -12,5 +12,5 @@ interface ImageServiceInterface
 {
     public function createImage( $imageB64OrUploadedFile, array $options = [] );
     public function removeImage( $imageId, $skipValidation = TRUE );
-    //public function processAndMoveImageAndThumbnailsToCloud( Image $image, array $sizes = [] );
+    public function processImage( Image $image, array $sizes = [] );
 }

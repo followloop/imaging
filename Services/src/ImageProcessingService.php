@@ -15,6 +15,7 @@ class ImageProcessingService implements ImageProcessingServiceInterface
 
     protected $intervention;
     protected $disk;
+    protected $diskBasePath;
 
     protected $availableSettings = [
         'maintain_aspect_ratio'     => TRUE,
@@ -32,6 +33,7 @@ class ImageProcessingService implements ImageProcessingServiceInterface
     {
         $this->intervention = $imageManager;
         $this->disk = Storage::disk( config( 'imaging.local_disk_name', 'local' ) );
+        $this->diskBasePath = trim( $this->disk->getAdapter()->getPathPrefix(), '/' );
     }
 
 
@@ -45,20 +47,22 @@ class ImageProcessingService implements ImageProcessingServiceInterface
         $filename = md5( $b64StringOrURL  ).'.jpg';
         $image = $this->intervention->make( $b64StringOrURL );
 
-        $folderPath = rtrim( $destinationFolder, '/' ) ;
-        $pathWithFile = $folderPath . '/' . $filename;
+        $pathToFolderInDisk = get_path_to( $destinationFolder );
+        $pathToFile = get_path_to( $destinationFolder, $filename );
 
-        if ( !$this->disk->exists( $folderPath ) ) $this->disk->makeDirectory( $folderPath, 0775);
+        if ( !$this->disk->exists( $pathToFolderInDisk ) ) $this->disk->makeDirectory( $pathToFolderInDisk, 0775);
 
         try
         {
-            $result = $image->save( $pathWithFile, 100 );
+            $fullPathToImage = get_path_to( $this->diskBasePath, $destinationFolder, $filename );
+            $result = $image->save( $fullPathToImage, 100 );
         } catch( \Exception $e )
         {
+            dd( $e );
             $result = FALSE;
         }
 
-        return $result ? $pathWithFile : FALSE;
+        return $result ? $pathToFile : FALSE;
     }
 
 
@@ -73,10 +77,12 @@ class ImageProcessingService implements ImageProcessingServiceInterface
     {
         $resizedImages = [];
 
+        $sourceImage = get_path_to( $sourceImage );
         if ( $this->disk->exists( $sourceImage ) )
         {
             // Now we have to do it like this because the intervention library needs the full path.
-            $image = $this->intervention->make( $sourceImage );
+            $fullPathToImage = get_path_to( $this->diskBasePath, $sourceImage );
+            $image = $this->intervention->make( $fullPathToImage );
 
             if ( $image )
             {
@@ -123,18 +129,19 @@ class ImageProcessingService implements ImageProcessingServiceInterface
                         $extension = is_null( $extension ) ? $pathInfo['extension'] : $extension;
                         $quality = (int)@$settings['quality'];
 
-                        $saveInFolder = rtrim( $destinationFolder, '/' ) . '/' . $folderName;
+                        $pathToFolder = get_path_to( $destinationFolder, $folderName );
 
-                        if ( !$this->disk->exists( $saveInFolder ) ) $this->disk->makeDirectory( $saveInFolder );
+                        if ( !$this->disk->exists( $pathToFolder ) ) $this->disk->makeDirectory( $pathToFolder );
 
                         // Once again: intervention is not able to save the image if we don't provide the full path.
-                        $partialNewPath = $saveInFolder . '/' . $filename . '.' . $extension;
-                        //$fullNewPath = storage_path( $partialNewPath );
+                        $finalFileName = $filename . '.' . $extension;
+                        $finalPathToProcessedFile = get_path_to( $pathToFolder, $finalFileName );
+                        $finalFullPathToProcessedFile = get_path_to( $this->diskBasePath, $finalPathToProcessedFile );
 
-                        $workWithThisImage->save( $partialNewPath, $quality);
+                        $workWithThisImage->save( $finalFullPathToProcessedFile, $quality);
 
                         // Return the base path.
-                        $resizedImages[ $folderName ] = $partialNewPath;
+                        $resizedImages[ $folderName ] = $finalPathToProcessedFile;
                     }
                 }
             }
@@ -159,5 +166,4 @@ class ImageProcessingService implements ImageProcessingServiceInterface
 
         return $parsedSettings;
     }
-
 }

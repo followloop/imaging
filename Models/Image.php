@@ -14,7 +14,7 @@ class Image extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'path', 'filename', 'type', 'thumbnails', 'metadata', 'processed'
+        'path', 'filename', 'type', 'thumbnails', 'metadata', 'processed', 'cloud'
     ];
 
 
@@ -83,10 +83,10 @@ class Image extends Model
      */
     protected function cdn_url_to( $path )
     {
-        if ( $this->processed ) $cdnBaseUrl = config('imaging.cloud_disk_url');
+        if ( $this->cloud ) $cdnBaseUrl = config('imaging.cloud_disk_url');
         else $cdnBaseUrl = config('imaging.local_disk_url');
 
-        $cdnUrlToImage = rtrim( $cdnBaseUrl, '/') . '/' . $path;
+        $cdnUrlToImage = rtrim( $cdnBaseUrl, '/') . '/' . trim( $path, '/');
 
         return $cdnUrlToImage;
     }

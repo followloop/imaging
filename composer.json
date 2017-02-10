@@ -17,7 +17,6 @@
         "illuminate/queue": "5.*",
         "illuminate/http": "5.*",
         "illuminate/filesystem": "5.*",
-        "followloop/laravel-repositories": "0.1.*",
         "followloop/validation-service": "0.1.*",
         "intervention/image": "^2.3"
     },
