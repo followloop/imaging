@@ -45,7 +45,4 @@ return [
     */
     'cloud_disk_url' => '',
 
-    'remove_after_moving' => TRUE
-
-
 ];
