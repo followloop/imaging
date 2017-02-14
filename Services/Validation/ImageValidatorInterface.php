@@ -12,7 +12,9 @@ interface ImageValidatorInterface extends ValidatorInterface
 {
     const IMAGE_CREATION = 'imageCreation';
     const EXISTS_BY_ID = 'existsById';
+    const EXISTS_BY_ID_EVEN_DELETED = 'existsByIdEvenDeleted';
 
     public function imageCreation();
     public function existsById();
+    public function existsByIdEvenDeleted();
 }

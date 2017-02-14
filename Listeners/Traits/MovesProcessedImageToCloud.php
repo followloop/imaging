@@ -36,10 +36,13 @@ trait MovesProcessedImageToCloud
 
             foreach( $image->thumbnails( NULL, TRUE ) as $thumb )
             {
-                $folderName = dirname( $thumb );
-                // And move them to the cloud.
-                $thumbFile = new File( get_path_to( $diskBasePath, $thumb ) );
-                $cloudDisk->putFileAs( $folderName, $thumbFile, $image->filename );
+                if ( !$cloudDisk->exists( $thumb ) )
+                {
+                    $folderName = dirname( $thumb );
+                    // And move them to the cloud.
+                    $thumbFile = new File( get_path_to( $diskBasePath, $thumb ) );
+                    $cloudDisk->putFileAs( $folderName, $thumbFile, $image->filename );
+                }
             }
 
             $image->cloud = TRUE;

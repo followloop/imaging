@@ -1,6 +1,6 @@
-# ValidationService
+# Imaging
 
-A package that provides a validation as a service for Laravel 5.
+A package that provides a neat way to work with images attached to models. 
 
 ## Goal
 
@@ -13,8 +13,11 @@ although it uses the Laravel Validation class by default, it can be extended to 
 
 ## Installation
 
-1. Install this package by adding it to your `composer.json` or by running `composer require followloop/validation-service` in your project's folder.
-2. Ready to go! No service provider or anything else needed :).
+1. Install this package by adding it to your `composer.json` or by running `composer require followloop/imaging` in your project's folder.
+2. Add the provider to your `config/app.php` file: `LOOP\Imaging\ImagingServiceProvider::class`
+3. Publish the configuration file by running `php artisan vendor:publish --provider="LOOP\Imaging\ImagingServiceProvider::class"`
+4. Open the configuration file (`config/imaging.php`) and configure the settings according to your needs. If you don't know any parameter, keep reading.
+5. Ready to go!
 
 
 ## Usage
@@ -173,9 +176,7 @@ class UsersService implements UsersServicesInterface
 
 ## Changelog
 
-#### v0.1.2:
-- Basic Laravel Validation service using the Laravel Validation class.
-
+-- No version released --
 
 ## Credits
 

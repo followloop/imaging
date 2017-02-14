@@ -34,5 +34,15 @@ class ImageValidatorLaravel extends LaravelValidator implements ImageValidatorIn
         ];
     }
 
+    /**
+     * @return array
+     */
+    public function existsByIdEvenDeleted()
+    {
+        return [
+            'id' => 'required|exists:images,id'
+        ];
+    }
+
 
 }
