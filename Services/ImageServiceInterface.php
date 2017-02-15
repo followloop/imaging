@@ -24,6 +24,11 @@ interface ImageServiceInterface
      *                  - path => Path where the image needs to be stored.
      *                  - sizes => Associative array of sizes that this image needs to be resized to.
      *                  - type => If the image belongs to a certain type, add it here. Useful to segregate.
+     *                  - maintain_aspect_ratio => If set to true, it will respect the aspect ratio of the image. Default: TRUE.
+     *                  - prevent_upsizing => Id set to true, the image won't be upsized (no quality loss). Default: TRUE.
+     *                  - crop => You can crop the image instead of resize it. To do so, set this to true. Default: FALSE.
+     *                  - extension => Extension you want to save the processed files with. Default: 'jpg',
+     *                  - quality => Quality of the generated images after processing. Default: 90
      * @return mixed array or false in case of error, instance of the Image, in case of success.
      */
     public function createImage( $imageB64OrUploadedFile, array $options = [] );
@@ -42,10 +47,10 @@ interface ImageServiceInterface
      * Processes an image stored in the local disk, and resizes it to the given sizes.
      *
      * @param mixed $imageIdOrImage ID of the image, or instance of the image to process.
-     * @param array $sizes associative array with the sizes that the image needs to be resized to.
+     * @param array $options this array may contain the same values as the $options param in the createImage() function.
      * @return mixed Image instance.
      */
-    public function processImage( $imageIdOrImage, array $sizes = [] );
+    public function processImage( $imageIdOrImage, array $options = [] );
 
     /**
      * Destroy an image (and its thumbs) from the disks and from the DB. It cannot be reverted.

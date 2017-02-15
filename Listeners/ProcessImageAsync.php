@@ -33,6 +33,6 @@ class ProcessImageAsync implements ShouldQueue
      */
     public function handle( ImageWasCreated $event )
     {
-        $this->processImage( $event->image, $event->sizes );
+        $this->processImage( $event->image, $event->options );
     }
 }

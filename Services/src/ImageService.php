@@ -58,15 +58,13 @@ class ImageService implements ImageServiceInterface
 
 
     /**
-     * @param $imageB64OrUploadedFile
+     * @param mixed $imageB64OrUploadedFile
      * @param array $options
-     * @return bool
+     * @return array|bool
      */
     public function createImage( $imageB64OrUploadedFile, array $options = [] )
     {
         $path = @$options['path'];
-        $sizes = @$options['sizes'];
-        $sizes = is_array( $sizes ) ? $sizes : [];
 
         $imagePath = $this->imageProcessingService->createImageFromB64StringOrURL( $imageB64OrUploadedFile, $path );
 
@@ -85,7 +83,7 @@ class ImageService implements ImageServiceInterface
             {
                 $image = Image::create( $data );
 
-                event( new ImageWasCreated( $image, $sizes ) );
+                event( new ImageWasCreated( $image, $options ) );
 
                 return $image;
             }
@@ -124,21 +122,24 @@ class ImageService implements ImageServiceInterface
 
 
     /**
-     * @param $imageIdOrImage
-     * @param array $sizes
+     * @param mixed $imageIdOrImage
+     * @param array $options
      * @return array
      */
-    public function processImage( $imageIdOrImage, array $sizes = [] )
+    public function processImage( $imageIdOrImage, array $options = [] )
     {
         $image = $this->getImageFromImageOrImageId( $imageIdOrImage );
 
         if ( !is_array( $image ) && !$image->processed )
         {
-             $finalThumbs = [];
+            $sizes = @$options['sizes'];
+            $sizes = is_array( $sizes ) ? $sizes : [];
+
+            $finalThumbs = [];
             $destinationPath = dirname( $image->path );
             foreach( $sizes as $sizeKey => $size )
             {
-                $thumbs = $this->imageProcessingService->resizeOrCropImageToSizes( $image->path, $destinationPath, [ $size ] );
+                $thumbs = $this->imageProcessingService->resizeOrCropImageToSizes( $image->path, $destinationPath, [ $size ], $options );
 
                 if ( $thumbs && !empty( $thumbs ) )
                 {
