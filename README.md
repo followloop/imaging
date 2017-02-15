@@ -25,7 +25,7 @@ both synchronously and asynchronously, reducing the amount of work that we have 
 
 The package provides 5 different things:
 - **Image Model:** You can establish relations in your entities by using this model.
-- **Configuration file:** 
+- **Configuration file:** It contains the settings for disks and image drivers to use.  
 - **Image Service:** It allows you to upload, process, and remove the images.
 - **Events/Listeners**: Allow you to handle the operations with the images (process, move them to CDN, etc).
 - **Commands**: Allow you to purge deleted images (destroy from disk) and resize existing ones.
@@ -171,22 +171,22 @@ There are some events and listeners included:
 
 #### EVENTS:
 
-**LOOP\Imaging\Events\ImageWasCreated:** Triggered when a new image was successfully uploaded and created in the DB/local disk.
-**LOOP\Imaging\Events\ImageWasProcessed:** Triggered when the image is processed and the thumbnails were generated (locally).
-**LOOP\Imaging\Events\ImageWasMovedToCloud:** Triggered when the image (and all its thumbnails) were moved to the cloud disk.
-**LOOP\Imaging\Events\ImageWasDeleted:** Triggered when an image gets deleted (soft deleted)
-
+**LOOP\Imaging\Events\ImageWasCreated:** Triggered when a new image was successfully uploaded and created in the DB/local disk.  
+**LOOP\Imaging\Events\ImageWasProcessed:** Triggered when the image is processed and the thumbnails were generated (locally).  
+**LOOP\Imaging\Events\ImageWasMovedToCloud:** Triggered when the image (and all its thumbnails) were moved to the cloud disk.  
+**LOOP\Imaging\Events\ImageWasDeleted:** Triggered when an image gets deleted (soft deleted).  
+ 
 ===========
 
 #### LISTENERS:
 
-**LOOP\Imaging\Listeners\ProcessImageAsync:** Processes the received image asynchronously (queued). It can subscribe to the ImageWasCreated event.
-**LOOP\Imaging\Listeners\ProcessImageSync:** Processes the received image synchronously (not queued). It can subscribe to the ImageWasCreated event.
-**LOOP\Imaging\Listeners\MoveProcessedImagesToCloudImageAsync:** Moves the processed image and its thumbnail to the cloud disk asynchronously (queued). It can subscribe to the ImageWasProcessed event.
-**LOOP\Imaging\Listeners\MoveProcessedImagesToCloudImageSync:** Moves the processed image and its thumbnail to the cloud disk synchronously (not queued). It can subscribe to the ImageWasProcessed event.
-**LOOP\Imaging\Listeners\RemoveLocalImageAsync:** Deletes the local files for the received image asynchronously (queued). It can subscribe to the ImageWasMovedToCloud event.
-**LOOP\Imaging\Listeners\RemoveLocalImageSync:** Deletes the local files for the received image synchronously (not queued). It can subscribe to the ImageWasMovedToCloud event.
-
+**LOOP\Imaging\Listeners\ProcessImageAsync:** Processes the received image asynchronously (queued). It can subscribe to the ImageWasCreated event.  
+**LOOP\Imaging\Listeners\ProcessImageSync:** Processes the received image synchronously (not queued). It can subscribe to the ImageWasCreated event.  
+**LOOP\Imaging\Listeners\MoveProcessedImagesToCloudImageAsync:** Moves the processed image and its thumbnail to the cloud disk asynchronously (queued). It can subscribe to the ImageWasProcessed event.  
+**LOOP\Imaging\Listeners\MoveProcessedImagesToCloudImageSync:** Moves the processed image and its thumbnail to the cloud disk synchronously (not queued). It can subscribe to the ImageWasProcessed event.  
+**LOOP\Imaging\Listeners\RemoveLocalImageAsync:** Deletes the local files for the received image asynchronously (queued). It can subscribe to the ImageWasMovedToCloud event.  
+**LOOP\Imaging\Listeners\RemoveLocalImageSync:** Deletes the local files for the received image synchronously (not queued). It can subscribe to the ImageWasMovedToCloud event.  
+  
 To configure them just add them to your EventServiceProvider located at `app/Providers/EventServiceProvider.php`
 
 As you can see, there are Async and Sync events. Subscribe just to one of them, according to your needs.
