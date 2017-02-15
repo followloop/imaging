@@ -87,7 +87,7 @@ class ImageProcessingService implements ImageProcessingServiceInterface
             {
                 $settings = $this->parseSettings( $extraSettings );
 
-                foreach( $sizes as $size )
+                foreach( $sizes as $index => $size )
                 {
                     $workWithThisImage = clone $image;
 
@@ -130,14 +130,14 @@ class ImageProcessingService implements ImageProcessingServiceInterface
 
                         $pathToFolder = get_path_to( $destinationFolder, $folderName );
 
-                        if ( !$this->disk->exists( $pathToFolder ) ) $this->disk->makeDirectory( $pathToFolder );
+                        if ( !$this->disk->exists( $pathToFolder ) ) $this->disk->makeDirectory( $pathToFolder, 0775 );
 
                         // Once again: intervention is not able to save the image if we don't provide the full path.
                         $finalFileName = $filename . '.' . $extension;
                         $finalPathToProcessedFile = get_path_to( $pathToFolder, $finalFileName );
                         $finalFullPathToProcessedFile = get_path_to( $this->diskBasePath, $finalPathToProcessedFile );
 
-                        $workWithThisImage->save( $finalFullPathToProcessedFile, $quality);
+                        if ( !$this->disk->exists( $finalPathToProcessedFile ) ) $workWithThisImage->save( $finalFullPathToProcessedFile, $quality);
 
                         // Return the base path.
                         $resizedImages[ $folderName ] = $finalPathToProcessedFile;

@@ -3,15 +3,15 @@
 namespace LOOP\Imaging\Events;
 
 /**
- * Class ImageWasRemoved
+ * Class ImageWasDeleted
  * @package LOOP\Imaging\Events
  */
-class ImageWasRemoved extends Event
+class ImageWasDeleted extends Event
 {
     protected $imageId;
 
     /**
-     * @param Image $imageId
+     * @param $imageId
      */
     public function __construct( $imageId )
     {

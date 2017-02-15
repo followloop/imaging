@@ -12,12 +12,10 @@ trait ProcessesImage
 {
     /**
      * @param Image $image
-     * @param $sizes
+     * @param $options
      */
-    public function processImage( Image $image, $sizes )
+    public function processImage( Image $image, $options )
     {
-        if ( !is_array( $sizes ) ) $sizes = [];
-
-        $this->imageService->processImage( $image, $sizes );
+        $this->imageService->processImage( $image, $options );
     }
 }

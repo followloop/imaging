@@ -2,9 +2,10 @@
 
 namespace LOOP\Imaging\Services\src;
 
+use Illuminate\Support\Facades\Storage;
 use LOOP\Imaging\Events\ImageWasCreated;
 use LOOP\Imaging\Events\ImageWasProcessed;
-use LOOP\Imaging\Events\ImageWasRemoved;
+use LOOP\Imaging\Events\ImageWasDeleted;
 use LOOP\Imaging\Models\Image;
 use LOOP\Imaging\Services\ImageProcessingServiceInterface;
 use LOOP\Imaging\Services\ImageServiceInterface;
@@ -36,15 +37,34 @@ class ImageService implements ImageServiceInterface
 
 
     /**
-     * @param $imageB64OrUploadedFile
+     * @param $imageId
+     * @return array
+     */
+    public function findImageById( $imageId )
+    {
+        $data = [
+            'id' => $imageId
+        ];
+
+        if ( $this->imageValidator->with( $data )->passes( ImageValidatorInterface::EXISTS_BY_ID ) )
+        {
+            $image = Image::find( $imageId );
+
+            return $image;
+        }
+
+        return $this->imageValidator->errors();
+    }
+
+
+    /**
+     * @param mixed $imageB64OrUploadedFile
      * @param array $options
-     * @return bool
+     * @return array|bool
      */
     public function createImage( $imageB64OrUploadedFile, array $options = [] )
     {
         $path = @$options['path'];
-        $sizes = @$options['sizes'];
-        $sizes = is_array( $sizes ) ? $sizes : [];
 
         $imagePath = $this->imageProcessingService->createImageFromB64StringOrURL( $imageB64OrUploadedFile, $path );
 
@@ -63,7 +83,7 @@ class ImageService implements ImageServiceInterface
             {
                 $image = Image::create( $data );
 
-                event( new ImageWasCreated( $image, $sizes ) );
+                event( new ImageWasCreated( $image, $options ) );
 
                 return $image;
             }
@@ -81,7 +101,7 @@ class ImageService implements ImageServiceInterface
      * @param bool|TRUE $skipValidation
      * @return array|bool
      */
-    public function removeImage( $imageId, $skipValidation = TRUE )
+    public function deleteImage( $imageId, $skipValidation = TRUE )
     {
         $data = [
             'id' => $imageId
@@ -92,7 +112,7 @@ class ImageService implements ImageServiceInterface
             $image = Image::find( $imageId );
             $image->delete();
 
-            event( new ImageWasRemoved( $imageId ) );
+            event( new ImageWasDeleted( $imageId ) );
 
             return TRUE;
         }
@@ -102,19 +122,24 @@ class ImageService implements ImageServiceInterface
 
 
     /**
-     * @param Image $image
-     * @param array $sizes
-     * @return Image
+     * @param mixed $imageIdOrImage
+     * @param array $options
+     * @return array
      */
-    public function processImage( Image $image, array $sizes = [] )
+    public function processImage( $imageIdOrImage, array $options = [] )
     {
-        if ( !$image->processed )
+        $image = $this->getImageFromImageOrImageId( $imageIdOrImage );
+
+        if ( !is_array( $image ) && !$image->processed )
         {
-             $finalThumbs = [];
+            $sizes = @$options['sizes'];
+            $sizes = is_array( $sizes ) ? $sizes : [];
+
+            $finalThumbs = [];
             $destinationPath = dirname( $image->path );
             foreach( $sizes as $sizeKey => $size )
             {
-                $thumbs = $this->imageProcessingService->resizeOrCropImageToSizes( $image->path, $destinationPath, [ $size ] );
+                $thumbs = $this->imageProcessingService->resizeOrCropImageToSizes( $image->path, $destinationPath, [ $size ], $options );
 
                 if ( $thumbs && !empty( $thumbs ) )
                 {
@@ -141,5 +166,77 @@ class ImageService implements ImageServiceInterface
 
     }
 
+
+    /**
+     * @param $imageIdOrImage
+     * @return array|bool
+     */
+    public function destroyImage( $imageIdOrImage )
+    {
+        $isImage = $imageIdOrImage instanceof Image;
+
+        $data = [
+            'id' => $isImage ? $imageIdOrImage : $imageIdOrImage->id
+        ];
+
+        if ( $isImage || $this->imageValidator->with( $data )->passes( ImageValidatorInterface::EXISTS_BY_ID_EVEN_DELETED ) )
+        {
+            $image = $isImage ? $imageIdOrImage : Image::find( $imageIdOrImage )->withTrashed();
+
+            // Remove from local disk.
+            $this->removeImageFromDisk( $image, config( 'imaging.local_disk_name', 'local' ) );
+
+            // If it's in the cloud then remove it from the cloud too.
+            if ( $image->cloud )
+            {
+                $this->removeImageFromDisk( $image, config( 'imaging.cloud_disk_name' ) );
+            }
+
+            // Destroy the entry.
+            $image->forceDelete();
+
+            return TRUE;
+        }
+
+        return $this->imageValidator->errors();
+    }
+
+
+    /*******************************************************************************************************************
+     *******************************************************************************************************************
+     ******************************************************************************************************************/
+    /**
+     * @param Image $image
+     * @param $diskName
+     */
+    protected function removeImageFromDisk( Image $image, $diskName )
+    {
+        if ( $diskName )
+        {
+            $disk = Storage::disk( $diskName );
+
+            // Delete all thumbnails locally.
+            foreach( $image->thumbnails( NULL, TRUE ) as $thumb )
+            {
+                $folderName = dirname( $thumb );
+                if ( $disk->exists( $folderName ) ) $disk->deleteDirectory( $folderName );
+            }
+
+            // Also remove the main pic.
+            if ( $disk->exists( $image->path ) ) $disk->delete( $image->path );
+        }
+    }
+
+    /**
+     * @param $imageOrImageId
+     * @return array
+     */
+    protected function getImageFromImageOrImageId( $imageOrImageId )
+    {
+        $isImage = $imageOrImageId instanceof Image;
+
+        return $isImage ? $imageOrImageId : $this->findImageById( $imageOrImageId->id );
+
+    }
 
 }

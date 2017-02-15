@@ -14,16 +14,16 @@ class ImageWasCreated extends Event
     use SerializesModels;
 
     protected $image;
-    protected $sizes;
+    protected $options;
 
     /**
      * @param Image $image
-     * @param array $sizes
+     * @param array $options
      */
-    public function __construct( Image $image, array $sizes = [] )
+    public function __construct( Image $image, array $options = [] )
     {
         $this->image = $image;
-        $this->sizes = $sizes;
+        $this->options = $options;
     }
 
 }

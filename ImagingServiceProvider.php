@@ -51,8 +51,9 @@ class ImagingServiceProvider extends ServiceProvider
 
         $this->loadHelpers();
 
-        // And generators.
-        //$this->registerRepositoryGenerator();
+        // And commands.
+        $this->registerPurgeImagesCommand();
+        $this->registerResizeImageCommand();
     }
 
 
@@ -110,17 +111,29 @@ class ImagingServiceProvider extends ServiceProvider
 
     /**
      *
-     *
-    private function registerRepositoryGenerator()
+     */
+    private function registerPurgeImagesCommand()
     {
-        $this->app->singleton('command.repository', function ($app)
+        $this->app->singleton('command.imaging.purge-deleted-images', function ($app)
         {
-            return $app['LOOP\LaravelRepositories\Commands\MakeRepositoryCommand'];
+            return $app[ \LOOP\Imaging\Commands\PurgeDeletedImages::class ];
         });
 
-        $this->commands('command.repository');
+        $this->commands('command.imaging.purge-deleted-images');
     }
-     * */
+
+    /**
+     *
+     */
+    private function registerResizeImageCommand()
+    {
+        $this->app->singleton('command.imaging.resize-image', function ($app)
+        {
+            return $app[ \LOOP\Imaging\Commands\ResizeImage::class ];
+        });
+
+        $this->commands('command.imaging.resize-image');
+    }
 
 
 }

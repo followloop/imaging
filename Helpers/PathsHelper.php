@@ -19,7 +19,7 @@ function get_path_to()
         if ( $count != $finalIndex ) $finalSegment .= '/';
     }
 
-    $finalSegment = ltrim( $finalSegment, '/' );
+    $finalSegment = '/'.ltrim( $finalSegment, '/' );
 
     return $finalSegment;
 }
