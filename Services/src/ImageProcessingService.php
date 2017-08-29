@@ -21,7 +21,7 @@ class ImageProcessingService implements ImageProcessingServiceInterface
         'maintain_aspect_ratio'     => TRUE,
         'prevent_upsizing'          => TRUE,
         'crop'                      => FALSE,
-        'extension'                 => 'PNG',
+        'extension'                 => 'png',
         'quality'                   => 90
     ];
 
@@ -44,7 +44,7 @@ class ImageProcessingService implements ImageProcessingServiceInterface
      */
     public function createImageFromB64StringOrURL( $b64StringOrURL, $destinationFolder )
     {
-        $filename = md5( $b64StringOrURL  ). $this->availableSettings['extension'];
+        $filename = md5( $b64StringOrURL  ) $this->availableSettings['extension'];
         $image = $this->intervention->make( $b64StringOrURL );
 
         $pathToFolderInDisk = get_path_to( $destinationFolder );
